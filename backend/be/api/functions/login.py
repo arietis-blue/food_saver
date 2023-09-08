@@ -6,12 +6,16 @@ from jose import jwt
 from datetime import datetime, timedelta
 from pydantic import BaseModel
 from fastapi.security import OAuth2PasswordBearer
+from dotenv import load_dotenv
+import os
 
+# python3.7 -m pip install python-dotenv  
 
+load_dotenv()
 
-# to get a string like this run:
-# openssl rand -hex 32
-SECRET_KEY = "your_key"
+# 環境変数からSECRET_KEYを取得
+SECRET_KEY = os.getenv("SECRET_KEY")
+
 
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 120 # 120分間トークンが有効
