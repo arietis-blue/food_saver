@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:5.7
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: sample_db
+      MYSQL_USER: mysqluser
+      MYSQL_PASSWORD: mysqlpass
+    volumes:
+      - ./backend/db/data:/var/lib/mysql
+      - ./backend/db/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./backend/db/initdb.d:/docker-entrypoint-initdb.d
+    ports:
+      - 3308:3308
+    command: --port 3308
+    tty: true
+
+  api:
+    depends_on:
+      - db
+    container_name: "api"
+    build: ./backend/be
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/be/api:/usr/src/server
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app/frontend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
